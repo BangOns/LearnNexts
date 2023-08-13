@@ -9,27 +9,36 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  async session({ session }) {},
-  async signIn({ profile }) {
-    try {
-      await connectToDB();
-      // cek jika user telah masuk
-      const userExist = await User.findOne({
-        email: profile.email,
+  callbacks: {
+    async session({ session }) {
+      const sessionUser = await User.findOne({
+        email: session.user.email,
       });
-      // dan jika tidak maka uesr membuat akun baru
-      if (!userExist) {
-        await User.create({
+      session.user.id = sessionUser._id.toString();
+      return session;
+    },
+
+    async signIn({ profile }) {
+      try {
+        await connectToDB();
+        // cek jika user telah masuk
+        const userExist = await User.findOne({
           email: profile.email,
-          username: profile.name.replace(" ", "").toLowerCase(),
-          image: profile.picture,
         });
+        // dan jika tidak maka uesr membuat akun baru
+        if (!userExist) {
+          await User.create({
+            email: profile.email,
+            username: profile.name.replace(" ", "").toLowerCase(),
+            image: profile.picture,
+          });
+        }
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
       }
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
+    },
   },
 });
 

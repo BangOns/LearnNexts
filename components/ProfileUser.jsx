@@ -6,35 +6,20 @@ function PromptCardList({ data, handleTagClick, handleEdit, handleDelete }) {
   return (
     <div className="mt-10 prompt_layout">
       {data.map((post) => (
-        <PromptCards
-          key={post._id}
-          post={post}
-          handleEdit={() => handleEdit && handleEdit(post)}
-          handleDelete={() => handleDelete && handleDelete(post)}
-        />
+        <PromptCards key={post._id} post={post} />
       ))}
     </div>
   );
 }
 
-export default function Profile({
-  name,
-  handleEdit,
-  description,
-  data,
-  handleDelete,
-}) {
+export default function ProfileUser({ name, description, data }) {
   return (
     <section className="w-full">
       <h1 className="head_text text-left">
-        <span className="blue_gradient">{name} Profile</span>
+        <span className="blue_gradient">{name}</span>
       </h1>
       <p className="desc text-left">{description}</p>
-      <PromptCardList
-        data={data}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
+      <PromptCardList data={data} />
     </section>
   );
 }
